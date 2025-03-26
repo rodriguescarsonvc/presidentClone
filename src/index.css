@@ -2,7 +2,69 @@
 @tailwind components;
 @tailwind utilities;
 
-:root{
+:root {
   padding: 0;
   margin: 0;
+}
+
+body {
+  font-family: "ArticulateCF-Normal, Noto Sans JP";
+}
+
+@font-face {
+  font-family: "ArticulateCF-Bold";
+  src: url("/fonts/ArticulatCF-Bold.woff2");
+}
+
+@font-face {
+  font-family: "ArticulateCF-DemiBold";
+  src: url("/fonts/ArticulatCF-DemiBold.woff2");
+}
+
+@font-face {
+  font-family: "ArticulateCF-ExtraBold";
+  src: url("/fonts/ArticulatCF-ExtraBold.woff2");
+}
+
+@font-face {
+  font-family: "ArticulateCF-ExtraLight";
+  src: url("/fonts/ArticulatCF-ExtraLight.woff2");
+}
+
+@font-face {
+  font-family: "ArticulateCF-Heavy";
+  src: url("/fonts/ArticulatCF-Heavy.woff2");
+}
+
+@font-face {
+  font-family: "ArticulateCF-Light";
+  src: url("/fonts/ArticulatCF-Light.woff2");
+}
+
+@font-face {
+  font-family: "ArticulateCF-Medium";
+  src: url("/fonts/ArticulatCF-Medium.woff2");
+}
+
+@font-face {
+  font-family: "ArticulateCF-Normal";
+  src: url("/fonts/ArticulatCF-Normal.woff2");
+}
+
+@font-face {
+  font-family: "ArticulateCF-Regular";
+  src: url("/fonts/ArticulatCF-Regular.woff2");
+}
+
+@font-face {
+  font-family: "ArticulateCF-Thin";
+  src: url("/fonts/ArticulatCF-Thin.woff2");
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
 }
