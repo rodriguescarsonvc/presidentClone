@@ -1,19 +1,60 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { yellowCar, redCar, box, microphone, send } from "../assets/index";
+/* import SoundWave from "./SoundWave"; */
 
-const ChatInputBox = ({ onSend }) => {
+const ChatInputBox = ({
+  onSend,
+  transcript,
+  listening,
+  speechRecognition,
+  messageCount,
+  resetTranscript,
+}) => {
   const [input, setInput] = useState("");
 
-  const handleSend = () => {
-    if (input.trim()) {
-      onSend(input.trim());
-      setInput("");
-    }
+  const handleMessageSend = () => {
+    if (!input.trim()) return;
+    onSend(input.trim());
+    setInput("");
   };
+
+  const handleStartListening = () => {
+    speechRecognition.startListening({ continuous: true }); // language: "ja-JP"
+  };
+
+  const stopListening = () => {
+    onSend(transcript);
+    resetTranscript;
+    speechRecognition.stopListening();
+  };
+
+/*   useEffect(() => {
+    if (listening) {
+      setInput(transcript); // Live update transcript in input field
+    }
+  }, [transcript, listening]); // Trigger updates whenever transcript changes */
+
+  if (listening) {
+    return (
+      <div className="flex flex-col items-center">
+        {/* <SoundWave isListening={listening}/> */}
+
+        <button
+          onClick={stopListening}
+          className="rounded-full transition-all lg:w-24 lg:h-24 w-20 h-20 bg-black flex items-center justify-center text-white lg:mt-10 mt-6 border border-[#333333] shadow-[0px_14.4px_41.14px_rgba(0,0,0,0.12)]"
+          aria-label={input ? "Send Message" : "Start Listening"}>
+          <img src={microphone} alt="send" className="w-8 h-8 md:w-[38px] md:h-[38px]"/>
+        </button>
+        <p className="text-[#A6A6A6] text-xs font-articulate-medium md:mt-6 mt-4">
+          Tap on this mic to stop listening
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col lg:gap-12 md:gap-8 gap-4 overflow-hidden md:py-6 py-4 bg-white border border-[#D6D6D6] rounded-2xl">
-      {!input && (
+      {!input && messageCount == 0 && (
         <div className="relative">
           <div className="overflow-x-scroll flex overflow-visible scrollbar-hide pr-4">
             {suggestions.map((suggestion, index) => (
@@ -45,11 +86,14 @@ const ChatInputBox = ({ onSend }) => {
           onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
         />
         <button
-          onClick={handleSend}
+          onClick={input.trim() ? handleMessageSend : handleStartListening}
           className="rounded-full hover:bg-neutral-900 transition-all w-10 h-10 bg-black flex items-center justify-center text-white"
-          aria-label="Send Message">
-            {input ? <img src={send} alt="send" /> : <img src={microphone} alt="send" />}
-          
+          aria-label={input ? "Send Message" : "Start Listening"}>
+          {input ? (
+            <img src={send} alt="send" />
+          ) : (
+            <img src={microphone} alt="send" />
+          )}
         </button>
       </div>
     </div>
