@@ -7,7 +7,7 @@ const ChatBox = ({ messages, transcript, listening, isProcessing, errorMessage }
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, listening]);
 
   if (listening) {
     const words = transcript.split(" ");
