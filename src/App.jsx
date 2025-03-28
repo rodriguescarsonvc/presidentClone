@@ -1,5 +1,5 @@
 import HeroSection from "./components/HeroSection"
-import Navbar from "./components/navbar"
+import Navbar from "./components/Navbar"
 
 function App() {
   
