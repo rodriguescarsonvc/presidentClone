@@ -1,6 +1,15 @@
 import { useEffect, useState } from "react";
-import { yellowCar, redCar, box, microphone, send } from "../assets/index";
-/* import SoundWave from "./SoundWave"; */
+import {
+  yellowCar,
+  redCar,
+  box,
+  microphone,
+  send,
+  loadingLottie,
+  stop,
+} from "../assets/index";
+import SoundWave from "./SoundWave";
+import Lottie from "react-lottie-player";
 
 const ChatInputBox = ({
   onSend,
@@ -9,44 +18,71 @@ const ChatInputBox = ({
   speechRecognition,
   messageCount,
   resetTranscript,
+  isProcessing,
+  onGenerateSpeech,
 }) => {
   const [input, setInput] = useState("");
+  const [confirmation, setConfirmation] = useState(false);
 
   const handleMessageSend = () => {
-    if (!input.trim()) return;
-    onSend(input.trim());
+    const message = input.trim();
+    if (!message) return;
+    onSend(message);
     setInput("");
+    onGenerateSpeech(message);
   };
+  
 
   const handleStartListening = () => {
     speechRecognition.startListening({ continuous: true }); // language: "ja-JP"
   };
 
   const stopListening = () => {
-    onSend(transcript);
-    resetTranscript;
-    speechRecognition.stopListening();
+    setConfirmation(true);
+    setTimeout(() => {
+      speechRecognition.stopListening();
+      if (transcript.trim()) {
+        onSend(transcript);
+        onGenerateSpeech(transcript);
+      }
+      resetTranscript();
+      setConfirmation(false);
+    }, 700);
   };
 
-/*   useEffect(() => {
-    if (listening) {
-      setInput(transcript); // Live update transcript in input field
-    }
-  }, [transcript, listening]); // Trigger updates whenever transcript changes */
-
-  if (listening) {
+  if (listening || isProcessing) {
     return (
       <div className="flex flex-col items-center">
-        {/* <SoundWave isListening={listening}/> */}
+        {/* <SoundWave isListening={listening} /> */}
 
         <button
           onClick={stopListening}
-          className="rounded-full transition-all lg:w-24 lg:h-24 w-20 h-20 bg-black flex items-center justify-center text-white lg:mt-10 mt-6 border border-[#333333] shadow-[0px_14.4px_41.14px_rgba(0,0,0,0.12)]"
+          disabled={confirmation || isProcessing}
+          className="rounded-full transition-all lg:w-24 lg:h-24 w-20 h-20 bg-black flex items-center justify-center text-white lg:mt-10 mt-6 border border-[#333333] shadow-[0px_14.4px_41.14px_rgba(0,0,0,0.12)] relative"
           aria-label={input ? "Send Message" : "Start Listening"}>
-          <img src={microphone} alt="send" className="w-8 h-8 md:w-[38px] md:h-[38px]"/>
+          {confirmation ? (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Lottie
+                loop
+                animationData={loadingLottie}
+                play
+                className="z-10 w-16 h-16"
+              />
+            </div>
+          ) : (
+            <img
+              src={isProcessing ? stop : microphone}
+              alt="send"
+              className="w-8 h-8 md:w-[38px] md:h-[38px]"
+            />
+          )}
         </button>
         <p className="text-[#A6A6A6] text-xs font-articulate-medium md:mt-6 mt-4">
-          Tap on this mic to stop listening
+          {confirmation
+            ? "Processing..."
+            : isProcessing
+            ? "Tap here to stop processing"
+            : "Tap on this mic to stop listening"}
         </p>
       </div>
     );
