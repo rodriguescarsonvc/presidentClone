@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   yellowCar,
   redCar,
@@ -26,6 +26,28 @@ const ChatInputBox = ({
 }) => {
   const [input, setInput] = useState("");
   const [confirmation, setConfirmation] = useState(false);
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+
+  useEffect(() => {
+    if (!audio) return;
+    if (!audio.paused) {
+      setIsAudioPlaying(true);
+    }
+
+    const handlePlay = () => setIsAudioPlaying(true);
+    const handlePause = () => setIsAudioPlaying(false);
+    const handleEnded = () => setIsAudioPlaying(false);
+
+    audio.addEventListener("play", handlePlay);
+    audio.addEventListener("pause", handlePause);
+    audio.addEventListener("ended", handleEnded);
+
+    return () => {
+      audio.removeEventListener("play", handlePlay);
+      audio.removeEventListener("pause", handlePause);
+      audio.removeEventListener("ended", handleEnded);
+    };
+  }, [audio]);
 
   const handleMessageSend = () => {
     if (audio) {
@@ -47,10 +69,14 @@ const ChatInputBox = ({
     }
   };
 
-  const handleStartListening = () => {
+  const handleStopAudio = () => {
     if (audio) {
       audio.pause();
     }
+  };
+
+  const handleStartListening = () => {
+    handleStopAudio();
     speechRecognition.startListening({ continuous: true, language: "ja-JP" }); // language: "ja-JP"
   };
 
@@ -90,11 +116,7 @@ const ChatInputBox = ({
               />
             </div>
           ) : isProcessing ? (
-            <img
-              src={stop}
-              alt="send"
-              className="w-6 h-6"
-            />
+            <img src={stop} alt="send" className="w-6 h-6" />
           ) : (
             <Lottie
               loop
@@ -146,16 +168,24 @@ const ChatInputBox = ({
             e.target.style.height = "auto"; // Reset height to calculate new height
             e.target.style.height = `${e.target.scrollHeight}px`; // Dynamic height adjustment
           }}
-          onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
+          onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleMessageSend() }
         />
         <button
-          onClick={input.trim() ? handleMessageSend : handleStartListening}
+          onClick={isAudioPlaying ? handleStopAudio : input.trim() ? handleMessageSend : handleStartListening}
           className="rounded-full hover:bg-neutral-900 transition-all w-10 h-10 bg-[#333333] flex items-center justify-center text-white"
-          aria-label={input ? "Send Message" : "Start Listening"}>
-          {input ? (
+          aria-label={
+            isAudioPlaying
+              ? "Stop Audio"
+              : input.trim()
+              ? "Send Message"
+              : "Start Listening"
+          }>
+          {isAudioPlaying ? (
+            <img src={stop} alt="stop" className="w-4 h-4" />
+          ) : input.trim() ? (
             <img src={send} alt="send" />
           ) : (
-            <img src={microphone} alt="send" />
+            <img src={microphone} alt="speak" />
           )}
         </button>
       </div>
