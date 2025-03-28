@@ -6,3 +6,6 @@ export { default as microphone } from "./microphone.svg";
 export { default as send } from "./send.svg";
 export { default as stop } from "./stop.svg";
 export { default as loadingLottie } from "./loadingLottie.json";
+export { default as confirmingLottie } from "./confirmingLottie.json";
+export { default as listeningLottie } from "./listeningLottie.json";
+export { default as chatThinking } from "./chatThinking.json";

@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   yellowCar,
   redCar,
   box,
   microphone,
   send,
-  loadingLottie,
   stop,
+  confirmingLottie,
+  listeningLottie,
 } from "../assets/index";
 import SoundWave from "./SoundWave";
 import Lottie from "react-lottie-player";
@@ -63,42 +64,52 @@ const ChatInputBox = ({
       }
       resetTranscript();
       setConfirmation(false);
-    }, 2000);
+    }, 700); // change to 700ms
   };
 
   if (listening || isProcessing) {
     return (
       <div className="flex flex-col items-center">
         {/* <SoundWave isListening={listening} /> */}
-
         <button
           onClick={handleStopClick}
           disabled={confirmation}
-          className="rounded-full transition-all lg:w-24 lg:h-24 w-20 h-20 bg-black flex items-center justify-center text-white lg:mt-10 mt-6 border border-[#333333] shadow-[0px_14.4px_41.14px_rgba(0,0,0,0.12)] relative"
+          className={`rounded-full transition-all lg:w-24 lg:h-24 w-20 h-20 flex items-center justify-center text-white lg:mt-10 mt-6 relative ${
+            confirmation
+              ? ""
+              : "bg-[#333333]  shadow-[0px_14.4px_41.14px_rgba(0,0,0,0.12)]"
+          }`}
           aria-label={input ? "Send Message" : "Start Listening"}>
           {confirmation ? (
             <div className="absolute inset-0 flex items-center justify-center">
               <Lottie
                 loop
-                animationData={loadingLottie}
+                animationData={confirmingLottie}
                 play
-                className="z-10 w-16 h-16"
+                className="z-10 w-24 h-24"
               />
             </div>
-          ) : (
+          ) : isProcessing ? (
             <img
-              src={isProcessing ? stop : microphone}
+              src={stop}
               alt="send"
-              className="w-6 h-6 md:w-[38px] md:h-[38px]"
+              className="w-6 h-6"
+            />
+          ) : (
+            <Lottie
+              loop
+              animationData={listeningLottie}
+              play
+              className="z-10 w-24 h-24"
             />
           )}
         </button>
-        <p className="text-[#A6A6A6] text-xs font-articulate-medium md:mt-6 mt-4">
+        <p className="text-[#A6A6A6] text-xs font-medium md:mt-6 mt-4">
           {confirmation
-            ? "Processing..."
+            ? "処理..."
             : isProcessing
-            ? "Tap here to stop processing"
-            : "Tap on this mic to stop listening"}
+            ? "処理を停止するにはここをタップしてください"
+            : "聞き取りを停止するにはこのマイクをタップしてください"}
         </p>
       </div>
     );
@@ -139,7 +150,7 @@ const ChatInputBox = ({
         />
         <button
           onClick={input.trim() ? handleMessageSend : handleStartListening}
-          className="rounded-full hover:bg-neutral-900 transition-all w-10 h-10 bg-black flex items-center justify-center text-white"
+          className="rounded-full hover:bg-neutral-900 transition-all w-10 h-10 bg-[#333333] flex items-center justify-center text-white"
           aria-label={input ? "Send Message" : "Start Listening"}>
           {input ? (
             <img src={send} alt="send" />

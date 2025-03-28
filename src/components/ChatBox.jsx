@@ -49,7 +49,7 @@ const ChatBox = ({ messages, transcript, listening, isProcessing, errorMessage }
       {messages.map((msg, index) => (
         <Message key={index} message={msg.text} sender={msg.sender} />
       ))}
-      {isProcessing && <Message message="...." sender="bot" />}
+      {isProcessing && <Message sender="bot" isThinking={true} />}
       {/* {errorMessage && <Message message={errorMessage} sender="bot" />} */}
       <div ref={chatEndRef} />
       {/* Fade Effect */}
