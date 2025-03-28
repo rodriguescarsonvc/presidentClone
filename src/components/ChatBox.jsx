@@ -32,7 +32,7 @@ const ChatBox = ({ messages, transcript, listening, isProcessing, errorMessage }
 
   if (messages.length == 0) {
     return (
-      <div className="w-3/4 bg-white font-semibold lg:mt-20 md:mt-16 mt-10">
+      <div className="w-3/4 bg-white font-semibold lg:pt-20 pt-16">
         <h2 className="md:text-5xl text-3xl">
           こんにちは！
           <br />

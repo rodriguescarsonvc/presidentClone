@@ -89,7 +89,7 @@ const ChatInputBox = ({
             <img
               src={isProcessing ? stop : microphone}
               alt="send"
-              className="w-8 h-8 md:w-[38px] md:h-[38px]"
+              className="w-6 h-6 md:w-[38px] md:h-[38px]"
             />
           )}
         </button>
@@ -113,7 +113,7 @@ const ChatInputBox = ({
               <div
                 key={index}
                 onClick={() => setInput(suggestion.text)}
-                className="flex items-center ml-4 gap-4 rounded-full md:px-6 px-4 md:py-3 py-2 bg-white hover:bg-neutral-100 border border-[#D6D6D6] transition-all hover:cursor-pointer whitespace-nowrap md:text-sm text-sm">
+                className="flex items-center ml-4 gap-4 rounded-full md:pl-6 pl-4 pr-8 md:py-3 py-2 bg-white hover:bg-neutral-100 border border-[#D6D6D6] transition-all hover:cursor-pointer whitespace-nowrap md:text-sm text-sm">
                 <img src={suggestion.icon} alt="icon" className="w-6 h-6" />
                 {suggestion.text}
               </div>
@@ -124,7 +124,7 @@ const ChatInputBox = ({
           <div className="absolute top-0 right-0 w-20 h-full pointer-events-none bg-gradient-to-l from-white to-transparent" />
         </div>
       )}
-      <div className="flex items-end gap-4 px-6">
+      <div className="flex items-end gap-4 md:px-6 px-4">
         <textarea
           className="flex-grow outline-none bg-white pr-3 py-2 md:text-base text-sm text-black placeholder-[#A6A6A6] resize-none overflow-y-auto max-h-40"
           placeholder="何でも聞いてください。"
