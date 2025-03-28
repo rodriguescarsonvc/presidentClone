@@ -6,29 +6,53 @@ import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
 import { generateSpeech } from "../utils/api";
+import axios from "axios";
+
+
 
 const HeroSection = () => {
   const { transcript, listening, resetTranscript, browserSupportsSpeechRecognition } = useSpeechRecognition();
   const [messages, setMessages] = useState([]);
-  const [audioUrl, setAudioUrl] = useState(null);
+  const [audio, setAudio] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [abortController, setAbortController] = useState(null);
 
   const generateSpeechHandler = async (message) => {
+    if (audio) {
+      audio.pause();
+      audio.currentTime = 0;
+    }
     setIsLoading(true);
     setError(null);
+
+    const controller = new AbortController();
+    setAbortController(controller);
+
     try {
       const { reply, blobUrl } = await generateSpeech(message);
-      setAudioUrl(blobUrl);
       setMessages((prev) => [...prev, { text: reply, sender: "bot" }]);
-      const audio = new Audio(blobUrl);
-      audio.play();
+      const newAudio = new Audio(blobUrl);
+      setAudio(newAudio);
+      newAudio.play();
     } catch (err) {
-        setError('Failed to generate speech. Please try again.');
+      if (axios.isCancel(err)) {
+        setError("Speech generation was canceled.");
+      } else {
+        setError("Failed to generate speech. Please try again.");
+      }
     } finally {
         setIsLoading(false);
+        setAbortController(null);
     }
 };
+
+  const handleStopProcessing = () => {
+    setIsLoading(false);
+    if (abortController) {
+        abortController.abort(); // Cancel the request
+    }
+  };
 
   const sendMessageHandler = (message) => setMessages((prev) => [...prev, { text: message, sender: "user" }]);
 
@@ -55,6 +79,8 @@ const HeroSection = () => {
             resetTranscript={resetTranscript}
             isProcessing={isLoading}
             onGenerateSpeech={generateSpeechHandler}
+            onStopProcessing={handleStopProcessing}
+            audio={audio}
           />
         </div>
       </div>

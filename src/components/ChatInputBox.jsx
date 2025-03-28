@@ -20,21 +20,37 @@ const ChatInputBox = ({
   resetTranscript,
   isProcessing,
   onGenerateSpeech,
+  onStopProcessing,
+  audio,
 }) => {
   const [input, setInput] = useState("");
   const [confirmation, setConfirmation] = useState(false);
 
   const handleMessageSend = () => {
+    if (audio) {
+      audio.pause();
+    }
     const message = input.trim();
     if (!message) return;
     onSend(message);
     setInput("");
     onGenerateSpeech(message);
   };
-  
+
+  const handleStopClick = () => {
+    if (isProcessing) {
+      console.log("Stopping processing...");
+      onStopProcessing(); // Trigger cancellation when in processing state
+    } else {
+      stopListening(); // Existing logic for stopping listening
+    }
+  };
 
   const handleStartListening = () => {
-    speechRecognition.startListening({ continuous: true }); // language: "ja-JP"
+    if (audio) {
+      audio.pause();
+    }
+    speechRecognition.startListening({ continuous: true, language: "ja-JP" }); // language: "ja-JP"
   };
 
   const stopListening = () => {
@@ -47,7 +63,7 @@ const ChatInputBox = ({
       }
       resetTranscript();
       setConfirmation(false);
-    }, 700);
+    }, 2000);
   };
 
   if (listening || isProcessing) {
@@ -56,8 +72,8 @@ const ChatInputBox = ({
         {/* <SoundWave isListening={listening} /> */}
 
         <button
-          onClick={stopListening}
-          disabled={confirmation || isProcessing}
+          onClick={handleStopClick}
+          disabled={confirmation}
           className="rounded-full transition-all lg:w-24 lg:h-24 w-20 h-20 bg-black flex items-center justify-center text-white lg:mt-10 mt-6 border border-[#333333] shadow-[0px_14.4px_41.14px_rgba(0,0,0,0.12)] relative"
           aria-label={input ? "Send Message" : "Start Listening"}>
           {confirmation ? (
@@ -97,7 +113,7 @@ const ChatInputBox = ({
               <div
                 key={index}
                 onClick={() => setInput(suggestion.text)}
-                className="flex items-center ml-4 gap-4 rounded-full px-6 py-3 bg-white hover:bg-neutral-100 border border-[#D6D6D6] transition-all hover:cursor-pointer whitespace-nowrap">
+                className="flex items-center ml-4 gap-4 rounded-full md:px-6 px-4 md:py-3 py-2 bg-white hover:bg-neutral-100 border border-[#D6D6D6] transition-all hover:cursor-pointer whitespace-nowrap md:text-sm text-sm">
                 <img src={suggestion.icon} alt="icon" className="w-6 h-6" />
                 {suggestion.text}
               </div>
@@ -110,7 +126,7 @@ const ChatInputBox = ({
       )}
       <div className="flex items-end gap-4 px-6">
         <textarea
-          className="flex-grow outline-none bg-white pr-3 py-2 text-base text-black placeholder-[#A6A6A6] resize-none overflow-y-auto max-h-40"
+          className="flex-grow outline-none bg-white pr-3 py-2 md:text-base text-sm text-black placeholder-[#A6A6A6] resize-none overflow-y-auto max-h-40"
           placeholder="何でも聞いてください。"
           value={input}
           rows={1}
