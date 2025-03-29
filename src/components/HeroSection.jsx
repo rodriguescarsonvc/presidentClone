@@ -30,7 +30,7 @@ const HeroSection = () => {
     setAbortController(controller);
 
     try {
-      const { reply, blobUrl } = await generateSpeech(message);
+      const { reply, blobUrl } = await generateSpeech(message, 1, controller.signal);
       setMessages((prev) => [...prev, { text: reply, sender: "bot" }]);
       const newAudio = new Audio(blobUrl);
       setAudio(newAudio);

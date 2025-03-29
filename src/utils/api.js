@@ -1,14 +1,17 @@
 import axios from "axios";
 
 const MAX_RETRIES = 3;
-const RETRY_DELAY = 2000; // Initial delay in ms (2 seconds)
+const RETRY_DELAY = 2000;
 
-export const generateSpeech = async (text, attempt = 1) => {
+export const generateSpeech = async (text, attempt = 1, signal) => {
   try {
     const response = await axios.post(
       "https://xvka3jcvrpzywgjvswb7hnp4jy0jhnzl.lambda-url.us-east-1.on.aws/chat",
       { message: text },
-      { headers: { "Content-Type": "application/json" } }
+      {
+        headers: { "Content-Type": "application/json" },
+        signal, // to respect AbortController
+      }
     );
 
     const { reply, blobUrl } = response.data;
@@ -20,19 +23,19 @@ export const generateSpeech = async (text, attempt = 1) => {
     return { reply, blobUrl };
   } catch (error) {
     if (signal?.aborted) {
-      throw axios.Cancel("Request was canceled by the user.");
+      throw axios.Cancel("Request was canceled by the user."); // Important for handling cancellation
     }
     if (axios.isAxiosError(error)) {
-
       const status = error.response?.status;
       const errorMsg = error.response?.data?.error || error.message;
 
       if (status === 503 && attempt <= MAX_RETRIES) {
-        const delay = RETRY_DELAY * Math.pow(2, attempt - 1); // Exponential backoff
+        if (signal?.aborted) return { error: "Request was canceled by the user." }; // Prevent retry if aborted
+        const delay = RETRY_DELAY * Math.pow(2, attempt - 1);
         console.warn(`Service unavailable. Retrying in ${delay / 1000}s...`);
 
         await new Promise((resolve) => setTimeout(resolve, delay));
-        return generateSpeech(text, attempt + 1); // Recursive retry
+        return generateSpeech(text, attempt + 1, signal); // Pass signal for retries
       }
 
       switch (status) {
