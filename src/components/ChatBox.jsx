@@ -34,10 +34,9 @@ const ChatBox = ({ messages, transcript, listening, isProcessing, errorMessage }
     return (
       <div className="w-3/4 bg-white font-semibold lg:pt-20 pt-16">
         <h2 className="md:text-5xl text-3xl">
-          こんにちは！
-          <br />
-          こちらはトヨタの社長です。何 <br />
-          かご用件はございますか？
+          こんにちは !<br />
+          Toyota Connectedの社長です。 <br />
+          何かご用件はございますか ?
         </h2>
         <p className="md:text-base text-sm mt-6">私に聞いてみてください</p>
       </div>

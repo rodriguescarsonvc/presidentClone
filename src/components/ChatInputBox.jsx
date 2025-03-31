@@ -194,9 +194,9 @@ const ChatInputBox = ({
 };
 
 const suggestions = [
-  { text: "最新の注文状況を確認してください。", icon: box },
-  { text: "最寄りのトヨタサービスセンターを探してください。", icon: yellowCar },
-  { text: "最新のトヨタ車について教えてください。", icon: redCar },
+  { text: "会社のビジョンについて教えてください。", icon: box },
+  { text: "会社のバリューはどのようなものですか？", icon: yellowCar },
+  { text: "会社の魅力を教えてください。", icon: redCar },
 ];
 
 export default ChatInputBox;
