@@ -6,7 +6,7 @@ const RETRY_DELAY = 2000;
 export const generateSpeech = async (text, attempt = 1, signal) => {
   try {
     const response = await axios.post(
-      "https://xvka3jcvrpzywgjvswb7hnp4jy0jhnzl.lambda-url.us-east-1.on.aws/chat",
+      "/api/chat",
       { message: text },
       {
         headers: { "Content-Type": "application/json" },
